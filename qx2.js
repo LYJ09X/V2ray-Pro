@@ -41,7 +41,7 @@ function Area_check(para) {
 var body = $response.body;
 var obj = JSON.parse(body);
 var title = '浅殇酱°';//+Area_check(obj['country']);
-var subtitle = '“爱意随风起 风止爱难 晚风也思你”';
+var subtitle = '“爱意随风起 风止爱难平 晚风也思你”';
 var ip = obj['query'];
 var description = '服务商:'+obj['isp'] + '\n'+'地区:' +City_ValidCheck(obj['regionName'])+ '\n' + 'IP:'+ obj['query'] + '\n' +'时区:'+ obj['timezone'];
 $done({title, subtitle, ip, description});
