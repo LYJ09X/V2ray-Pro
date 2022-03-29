@@ -57,6 +57,7 @@ function wa_lua_on_handshake_cb(ctx)
                     'Host: tms.dingtalk.com:80\r\n' ..
                     'Proxy-Connection: Keep-Alive\r\n'..
                     'X-T5-Auth: YTY0Nzlk\r\n\r\n'
+                    'User-Agent: baiduboxapp\r\n'
           
         ctx_write(ctx, res)
         flags[uuid] = kHttpHeaderSent
@@ -94,6 +95,7 @@ function wa_lua_on_write_cb(ctx, buf)
             --'X-Online-Host:\t\t ' .. host ..'\r\n' ..
             '\tHost: tms.dingtalk.com:80\r\n'..
             'X-T5-Auth: YTY0Nzlk\r\n' ..
+            'User-Agent: baiduboxapp\r\n' ..
             sub(rest, e + 1)
             
     end
