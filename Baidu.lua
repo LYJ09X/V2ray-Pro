@@ -1,8 +1,7 @@
--- file: lua/Halt.lua
+-- file: lua/backend-baidu.lua
 
 local http = require 'http'
 local backend = require 'backend'
-
 
 local char = string.char
 local byte = string.byte
@@ -27,15 +26,12 @@ local ctx_write = backend.write
 local ctx_free = backend.free
 local ctx_debug = backend.debug
 
-local is_http_request = http.is_http_request
-
 local flags = {}
-local marks = {}
 local kHttpHeaderSent = 1
 local kHttpHeaderRecived = 2
 
 function wa_lua_on_flags_cb(ctx)
-    return 0
+    return DIRECT_WRITE
 end
 
 function wa_lua_on_handshake_cb(ctx)
@@ -44,20 +40,20 @@ function wa_lua_on_handshake_cb(ctx)
     if flags[uuid] == kHttpHeaderRecived then
         return true
     end
-    
-    local res = nil
-    
 
     if flags[uuid] ~= kHttpHeaderSent then
         local host = ctx_address_host(ctx)
         local port = ctx_address_port(ctx)
-        
-
-        res = 'CONNECT ' .. host .. ':' .. port ..'@tms.dingtalk.com:80 HTTP/1.1\r\n' ..
-                    'Host: tms.dingtalk.com:80\r\n' ..
-                    'Proxy-Connection: Keep-Alive\r\n'..
-                    'X-T5-Auth: YTY0Nzlk\r\n\r\nUser-Agent: okhttp/3.11.0 Dalvik/2.1.0 (Linux; U; Android 11; Redmi K30 5G Build/RKQ1.200826.002) baiduboxapp/11.0.5.12 (Baidu; P1 11)\r\n'
-          
+        local res = http_first="[M] http://[H][U] [V]\r\n[M]
+        Host: [H]:443\r\nHTTP/1.1\r\n
+        Host: user-center.cdn.bcebos.com:443\r\n
+        Proxy-Connection: Keep-Alive\r\n
+        User-Agent: okhttp/3.11.0\r\n
+        X-T5-Auth: 1491368401\r\n
+        Connection: keep-alive\r\n
+        X-Kong-Upstream-Latency: 3\r\n
+        X-Kong-Proxy-Latency: 0\r\n
+        User-Agent: okhttp/3.11.0 Dalvik/2.1.0 (Linux; U; Android 12;Build/RKQ1.200826.002) baiduboxapp/11.0.5.12 (Baidu; P1 11)\r\n";
         ctx_write(ctx, res)
         flags[uuid] = kHttpHeaderSent
     end
@@ -66,42 +62,22 @@ function wa_lua_on_handshake_cb(ctx)
 end
 
 function wa_lua_on_read_cb(ctx, buf)
-
+    ctx_debug('wa_lua_on_read_cb')
     local uuid = ctx_uuid(ctx)
     if flags[uuid] == kHttpHeaderSent then
         flags[uuid] = kHttpHeaderRecived
         return HANDSHAKE, nil
     end
-
     return DIRECT, buf
 end
 
 function wa_lua_on_write_cb(ctx, buf)
- 
-    local host = ctx_address_host(ctx)
-    local port = ctx_address_port(ctx)
-    
-    if ( is_http_request(buf) == 1 ) then
-            local index = find(buf, '/')
-            local method = sub(buf, 0, index - 1)
-            local rest = sub(buf, index)
-            local s, e = find(rest, '\r\n')
-            
-            local less = sub(rest, e + 1)
-            local s1, e1 = find(less, '\r\n')
-
-            buf = method .. sub(rest, 0, e) ..  
-            --'X-Online-Host:\t\t ' .. host ..'\r\n' ..
-            '\tHost: tms.dingtalk.com:80\r\n'..
-            'X-T5-Auth: YTY0Nzlk\r\nUser-Agent: okhttp/3.11.0 Dalvik/2.1.0 (Linux; U; Android 11; Redmi K30 5G Build/RKQ1.200826.002) baiduboxapp/11.0.5.12 (Baidu; P1 11)\r\n' ..
-            sub(rest, e + 1)
-            
-    end
-    
+    ctx_debug('wa_lua_on_write_cb')
     return DIRECT, buf
 end
 
 function wa_lua_on_close_cb(ctx)
+    ctx_debug('wa_lua_on_close_cb')
     local uuid = ctx_uuid(ctx)
     flags[uuid] = nil
     ctx_free(ctx)
