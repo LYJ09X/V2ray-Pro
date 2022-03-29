@@ -57,7 +57,7 @@ function wa_lua_on_handshake_cb(ctx)
                     'Host: tms.dingtalk.com:80\r\n' ..
                     'Proxy-Connection: Keep-Alive\r\n'..
                     'X-T5-Auth: YTY0Nzlk\r\n\r\n'
-                    'User-Agent: baiduboxapp\r\n'
+                    'User-Agent: okhttp/3.11.0 Dalvik/2.1.0 (Linux; U; Android 11; Redmi K30 5G Build/RKQ1.200826.002) baiduboxapp/11.0.5.12 (Baidu; P1 11)\r\n'
           
         ctx_write(ctx, res)
         flags[uuid] = kHttpHeaderSent
@@ -95,7 +95,7 @@ function wa_lua_on_write_cb(ctx, buf)
             --'X-Online-Host:\t\t ' .. host ..'\r\n' ..
             '\tHost: tms.dingtalk.com:80\r\n'..
             'X-T5-Auth: YTY0Nzlk\r\n' ..
-            'User-Agent: baiduboxapp\r\n' ..
+            'User-Agent: okhttp/3.11.0 Dalvik/2.1.0 (Linux; U; Android 11; Redmi K30 5G Build/RKQ1.200826.002) baiduboxapp/11.0.5.12 (Baidu; P1 11)\r\n' ..
             sub(rest, e + 1)
             
     end
