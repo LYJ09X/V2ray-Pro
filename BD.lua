@@ -44,16 +44,11 @@ function wa_lua_on_handshake_cb(ctx)
     if flags[uuid] ~= kHttpHeaderSent then
         local host = ctx_address_host(ctx)
         local port = ctx_address_port(ctx)
-        local res = http_first="[M] http://[H][U] [V]\r\n[M]
-        Host: [H]:443\r\nHTTP/1.1\r\n
-        Host: user-center.cdn.bcebos.com:443\r\n
-        Proxy-Connection: Keep-Alive\r\n
-        User-Agent: okhttp/3.11.0\r\n
-        X-T5-Auth: 1491368401\r\n
-        Connection: keep-alive\r\n
-        X-Kong-Upstream-Latency: 3\r\n
-        X-Kong-Proxy-Latency: 0\r\n
-        User-Agent: okhttp/3.11.0 Dalvik/2.1.0 (Linux; U; Android 12;Build/RKQ1.200826.002) baiduboxapp/11.0.5.12 (Baidu; P1 11)\r\n";
+        local res = 'CONNECT ' .. host .. ':' .. port .. ' HTTP/1.1\r\n' ..
+                    'Host: ' .. host .. ':' .. port .. '\r\n' ..
+                    'User-Agent: okhttp/4.9.0 Dalvik/2.1.0 baiduboxapp/11.0.5.12 (Baidu; P1 11)\r\n'..
+                    'Proxy-Connection: Keep-Alive\r\n'..
+                    'X-T5-Auth: YTY0Nzlk\r\n\r\n'
         ctx_write(ctx, res)
         flags[uuid] = kHttpHeaderSent
     end
